@@ -28,9 +28,15 @@ bool    CommandHandler::check_channel_name(const std::string& name, Client& clie
         return true;
 }
 
-void    CommandHandler::execute_JOIN(Client& client, const ft_irc& server, Channel& Mainchannel) {
+void    CommandHandler::execute_JOIN(Client& client, Channel& Mainchannel) {
     if (client.getAuth() == 0) {
         sendMessageToClient(client, "You must authenticate with PASS first.\n");
+        command_args.clear();
+        return ;
+    }
+    else if (client.getUser() == "NULL")
+    {
+        sendMessageToClient(client, "Error: You must set both a nickname and a username before joining a channel.\n");
         command_args.clear();
         return ;
     }
@@ -40,12 +46,6 @@ void    CommandHandler::execute_JOIN(Client& client, const ft_irc& server, Chann
         return ;
     }
     else if (!check_channel_name(command_args[1], client)) {
-        command_args.clear();
-        return ;
-    }
-    else if (client.getUser() == "NULL")
-    {
-        sendMessageToClient(client, "Error: You must set both a nickname and a username before joining a channel.\n");
         command_args.clear();
         return ;
     }
@@ -63,6 +63,7 @@ void    CommandHandler::execute_JOIN(Client& client, const ft_irc& server, Chann
             if (channel->addUser(&client)) {
                 sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
                 channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
+                std::cout << "Log: "<< client.getUser() << " has joined the channel " << command_args[1] << std::endl;
             } else {
                 sendMessageToClient(client, "Could not add you to the channel.\n");
             }
@@ -71,7 +72,7 @@ void    CommandHandler::execute_JOIN(Client& client, const ft_irc& server, Chann
         // New channel was created and the client was added
         sendMessageToClient(client, "You have successfully created and joined the channel: " + channelName + "\n");
         channel->broadcastMessage(client.getNickname() + " has created and joined the channel.\n");
-        std::cout << client.getUser() << " has created and joined the channel " << command_args[1] << std::endl;
+        std::cout << "Log: " << client.getUser() << " has created and joined the channel " << command_args[1] << std::endl;
     }
     command_args.clear();
 }

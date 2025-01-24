@@ -33,7 +33,9 @@ class CommandHandler {
     void    execute_QUIT(Client& client, ft_irc& server);
     void    execute_ADMIN(Client& client);
     void    execute_WHO(Client& client, const ft_irc& server);
-    void    execute_JOIN(Client& client, const ft_irc& server, Channel& channel);
+    void    execute_JOIN(Client& client, Channel& Mainchannel);
+    void    execute_PART(Client& client, Channel& Mainchannel);
+    void    execute_PRIVMSG(Client& client, const ft_irc& server, Channel& Mainchannel);
 
     void    sendMessageToClient(const Client& client, const std::string& mesage);
     bool    check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list);

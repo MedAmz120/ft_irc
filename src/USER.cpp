@@ -18,7 +18,7 @@ void    CommandHandler::execute_USER(Client& client) {
         client.SetRealName(command_args[4]);
         sendMessageToClient(client, "Personal Info set successfully !\n");
         client.SetAuth();
-        std::cout << "User " << client.getClientFd() << " Set Username to "  << client.getUser() << std::endl;
+        std::cout << "Log: "<<  "User " << client.getClientFd() << " Set Username to "  << client.getUser() << std::endl;
     }
     command_args.clear();
 }

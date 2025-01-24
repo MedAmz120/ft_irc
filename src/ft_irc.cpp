@@ -27,6 +27,28 @@ const std::map<int, Client>& ft_irc::Getclient_list() const {
     return this->clients_list;
 }
 
+const Client& ft_irc::getRecipient(const std::string& nickname) const {
+    for (std::map<int, Client>::const_iterator it = clients_list.begin(); it != clients_list.end(); ++it) {
+        if (it->second.getNickname() == nickname) {
+            return it->second;  // Return a reference to the Client object
+        }
+    }
+    static Client defaultClient;  // Static default client
+    return defaultClient;  // Return a reference to a default client if not found
+}
+
+
+bool ft_irc::isClientInServer(const std::string& nickname) const {
+    std::map<int, Client>::const_iterator it; // Use const_iterator in a const method
+    for (it = clients_list.begin(); it != clients_list.end(); ++it) {
+        if (it->second.getNickname() == nickname) {
+            return true;  // Client with the specified nickname exists
+        }
+    }
+    return false;  // No client with the given nickname found
+}
+
+
 void    ft_irc::close_client_session(int fd) {
     for (std::map<int, Client>::const_iterator it = clients_list.begin(); it != clients_list.end(); ++it) {
         if (it->second.getClientFd() == fd) {
@@ -67,7 +89,7 @@ void    ft_irc::start() {
              std::cerr << "Accept Failed" << std::endl;
             continue;
         }
-        std::cout << "New Client connected" << std::endl;
+        std::cout << "Log: New Client connected" << std::endl;
         clients_list[new_socket] = Client(new_socket);
         Channel channels;
         while (true) {

@@ -36,6 +36,8 @@ class ft_irc {
     void                         reset_buffer();
     const std::map<int, Client>& Getclient_list() const;
     void                         close_client_session(int fd);
+    bool                         isClientInServer(const std::string& nickname) const;
+    const Client&                      getRecipient(const std::string &name) const;
 };
 
 #endif

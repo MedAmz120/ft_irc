@@ -24,7 +24,7 @@ void    CommandHandler::execute_NICK(Client& client, const ft_irc& server)
         else {
             client.SetNickName(command_args[1]);
             sendMessageToClient(client, "Nickname set successfully !\n");
-            std::cout << "User " << client.getClientFd() << " Set Nickname to "  << client.getNickname() << std::endl;
+            std::cout << "Log: " << "User " << client.getClientFd() << " Set Nickname to "  << client.getNickname() << std::endl;
         }
 
     }

@@ -21,7 +21,7 @@ void    CommandHandler::execute_PASS(Client& client) {
             sendMessageToClient(client, "Welcome to the server! You are now authenticated!\n");
             client.SetAuth();
             command_args.clear();
-            std::cout << "User " << client.getClientFd() << " authenticated successfully." << std::endl;
+            std::cout << "Log: "<<  "User " << client.getClientFd() << " authenticated successfully." << std::endl;
             return ;
         }
     }

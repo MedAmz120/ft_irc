@@ -56,8 +56,12 @@ void    CommandHandler::handleCommand(Client& client, ft_irc& server, Channel& c
         execute_QUIT(client, server); // still need work
     else if (command_args[0] == "ADMIN")
         execute_ADMIN(client);
-    else if (command_args[0] == "WHO")
+    else if (command_args[0] == "WHO") // Done
         execute_WHO(client, server);
-    else if (command_args[0] == "JOIN")
-        execute_JOIN(client, server, channel);
+    else if (command_args[0] == "JOIN") // Done
+        execute_JOIN(client, channel);
+    else if (command_args[0] == "PART")
+        execute_PART(client, channel);
+    else if (command_args[0] == "PRIVMSG")
+        execute_PRIVMSG(client, server, channel);
 }

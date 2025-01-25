@@ -1,26 +1,38 @@
-NAME 	= ircserv
-COMPILE = c++ -W -W -W -std=c++98
-SRC		= main.cpp src/ft_irc.cpp src/ft_commands.cpp src/Client.cpp src/ADMIN.cpp \
-		  src/USER.cpp src/PASS.cpp src/NICK.cpp src/QUIT.cpp src/WHO.cpp src/JOIN.cpp src/Channel.cpp \
-		  src/PART.cpp src/PRIVMSG.cpp
-OBJ		= $(SRC:.cpp=.o)
-HEADS	= include/ft_irc.hpp include/ft_commands.hpp include/Client.hpp
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ychihab <ychihab@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/12/05 21:44:38 by ychihab           #+#    #+#              #
+#    Updated: 2025/01/23 23:14:47 by ychihab          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+NAME = ircserv
+
+CXX = c++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+
+SRCS = main.cpp Client.cpp Channel.cpp
+
+OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(COMPILE) $(OBJ) -o $(NAME)
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
-
-%.o: %.cpp $(HEADS)
-	$(COMPILE) -c $< -o $@
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all clean
+.PHONY: all clean fclean re

@@ -40,7 +40,7 @@ void    CommandHandler::execute_PRIVMSG(Client& client, const ft_irc& server, Ch
                 return ;
                 }
                 else {
-                    sendMessageToClient(client, "Error: Error: You must be a member of the channel to send messages to it\n");
+                    sendMessageToClient(client, "Error: You must be a member of the channel to send messages to it\n");
                     command_args.clear();
                 }
             }

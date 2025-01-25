@@ -36,11 +36,16 @@ class CommandHandler {
     void    execute_JOIN(Client& client, Channel& Mainchannel);
     void    execute_PART(Client& client, Channel& Mainchannel);
     void    execute_PRIVMSG(Client& client, const ft_irc& server, Channel& Mainchannel);
+    void    execute_KICK(Client& client, ft_irc& server, Channel& Mainchannel);
+    void    execute_INVITE(Client& client, ft_irc& server, Channel& Mainchannel);
+    void    execute_MODE(Client& client, Channel& Mainchannel);
+    void    execute_TOPIC(Client& client, Channel& Mainchannel);
 
     void    sendMessageToClient(const Client& client, const std::string& mesage);
     bool    check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list);
     void    display_client_WHO(Client& client, const std::string& nick_name, const std::map<int, Client>& clients_list);
     bool    check_channel_name(const std::string& name, Client& client);
+    bool    check_mode(const std::string& mode, Client& client, const std::string& command_args);
 };
 
 

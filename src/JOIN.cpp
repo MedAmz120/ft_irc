@@ -40,7 +40,7 @@ void    CommandHandler::execute_JOIN(Client& client, Channel& Mainchannel) {
         command_args.clear();
         return ;
     }
-    else if (command_args.size() != 2) {
+    else if (command_args.size() > 3 || command_args.size() < 2) {
         sendMessageToClient(client, "Error: Bad usage JOIN <NickName>\n");
         command_args.clear();
         return ;
@@ -57,18 +57,44 @@ void    CommandHandler::execute_JOIN(Client& client, Channel& Mainchannel) {
     if (channel == nullptr) {
         // Channel already exists, retrieve the existing channel
         channel = Mainchannel.getChannel(command_args[1]);
+        if (!channel->getPassword().empty() && command_args.size() != 3) { // check if the channel is password protected
+            sendMessageToClient(client, "Error: Cannot Join " + channelName + " The channel is password protected\n");
+            command_args.clear();
+            return ;
+        }
         if (channel->isUserInChannel(&client)) {
             sendMessageToClient(client, "You are already in the channel: " + channelName + "\n");
-        } else {
-            if (channel->addUser(&client)) {
-                sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
-                channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
-                std::cout << "Log: "<< client.getUser() << " has joined the channel " << command_args[1] << std::endl;
-            } else {
-                sendMessageToClient(client, "Could not add you to the channel.\n");
+        } 
+        else 
+        {
+            if (!channel->getPassword().empty()) 
+            {
+                if (channel->getPassword() == command_args[2]) {
+                    if (channel->addUser(&client)) {
+                        sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
+                        channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
+                        std::cout << "Log: "<< client.getUser() << " has joined the channel " << command_args[1] << std::endl;
+                    }  else {
+                            sendMessageToClient(client, "Could not add you to the channel.\n");
+                    }
+                }
+                else
+                    sendMessageToClient(client, "Error: Cannot Join " + channelName + " Incorrect Password for channel\n");
+            }
+            else 
+            {
+                if (channel->addUser(&client)) {
+                    sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
+                    channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
+                    std::cout << "Log: "<< client.getUser() << " has joined the channel " << command_args[1] << std::endl;
+                }  
+                else {
+                        sendMessageToClient(client, "Could not add you to the channel.\n");
+                }
             }
         }
-    } else {
+    } 
+    else {
         // New channel was created and the client was added
         sendMessageToClient(client, "You have successfully created and joined the channel: " + channelName + "\n");
         channel->broadcastMessage(client.getNickname() + " has created and joined the channel.\n");

@@ -266,3 +266,9 @@ Client *Channel::findUserByNickname(const std::string &nickname)
 
     return NULL;
 }
+
+// ---------- Mohamed -----------
+
+const std::string& Channel::getPassword() {
+    return this->password;
+}

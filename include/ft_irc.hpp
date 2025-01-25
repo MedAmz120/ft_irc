@@ -37,7 +37,9 @@ class ft_irc {
     const std::map<int, Client>& Getclient_list() const;
     void                         close_client_session(int fd);
     bool                         isClientInServer(const std::string& nickname) const;
-    const Client&                      getRecipient(const std::string &name) const;
+    const Client&                getRecipient(const std::string &name) const;
+    Client&                      getRecipientNonConst(const std::string &name) ;
+    Client&                      getUserToKick(const std::string& nickname);
 };
 
 #endif

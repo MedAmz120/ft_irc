@@ -27,6 +27,18 @@ const std::map<int, Client>& ft_irc::Getclient_list() const {
     return this->clients_list;
 }
 
+// Returns a non-const reference to a Client object, allowing modifications.
+Client& ft_irc::getRecipientNonConst(const std::string& nickname) {
+    for (std::map<int, Client>::iterator it = clients_list.begin(); it != clients_list.end(); ++it) {
+        if (it->second.getNickname() == nickname) {
+            return it->second;  // Return a reference to the Client object
+        }
+    }
+    static Client defaultClient;  // Static default client, used as a fallback
+    // Consider configuring defaultClient in a recognizable way, such as setting a specific invalid nickname.
+    return defaultClient;  // Return a reference to a default client if not found
+}
+
 const Client& ft_irc::getRecipient(const std::string& nickname) const {
     for (std::map<int, Client>::const_iterator it = clients_list.begin(); it != clients_list.end(); ++it) {
         if (it->second.getNickname() == nickname) {
@@ -37,7 +49,6 @@ const Client& ft_irc::getRecipient(const std::string& nickname) const {
     return defaultClient;  // Return a reference to a default client if not found
 }
 
-
 bool ft_irc::isClientInServer(const std::string& nickname) const {
     std::map<int, Client>::const_iterator it; // Use const_iterator in a const method
     for (it = clients_list.begin(); it != clients_list.end(); ++it) {
@@ -46,6 +57,17 @@ bool ft_irc::isClientInServer(const std::string& nickname) const {
         }
     }
     return false;  // No client with the given nickname found
+}
+
+Client& ft_irc::getUserToKick(const std::string& nickname) {
+    std::map<int, Client>::iterator it;
+    for (it = clients_list.begin(); it != clients_list.end(); ++it) {
+        if (it->second.getNickname() == nickname) {
+            return it->second; // Return a reference to the Client object
+        }
+    }
+    static Client defaultClient; // Static default client
+    return defaultClient; // Return a reference to a default client if not found
 }
 
 

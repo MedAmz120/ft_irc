@@ -46,4 +46,6 @@ public:
     void getTopic(Client* user);
     void setMode(Client* user, const std::string& mode, const std::string& argument = "");
 
+    // --------------- Mohamed ------------
+    const std::string& getPassword();
 };

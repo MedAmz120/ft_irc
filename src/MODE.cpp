@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 bool    check_L_mode_arg(const std::string& str) // check the arguments if it s a valid number not a combination of chars
 {

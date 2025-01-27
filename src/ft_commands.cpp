@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 CommandHandler::CommandHandler()
 {}
@@ -20,6 +20,8 @@ CommandHandler::CommandHandler(const std::string& password_it) {
     valid_commands.insert("MODE");
     valid_commands.insert("TOPIC");
     valid_commands.insert("ADMIN");
+    valid_commands.insert("TIME");
+    valid_commands.insert("NOTICE");
     password = password_it;
 }
 
@@ -50,7 +52,7 @@ bool    CommandHandler::check_command(const std::string& client_input) {
     return true;
 }
 
-void    CommandHandler::handleCommand(Client& client, ft_irc& server, Channel& channel) {
+void    CommandHandler::handleCommand(Client& client, Server& server, Channel& channel) {
     if (command_args[0] == "PASS")
         execute_PASS(client);
     else if (command_args[0] == "USER") // Done
@@ -77,4 +79,8 @@ void    CommandHandler::handleCommand(Client& client, ft_irc& server, Channel& c
         execute_INVITE(client, server, channel);
     else if (command_args[0] == "TOPIC") // DONE but Channel::setTopic() doesn't check properly if the channel is topic restricted and must add log message also
         execute_TOPIC(client, channel);
+    else if (command_args[0] == "TIME") // DONE
+        execute_TIME(client);
+    else if (command_args[0] == "NOTICE") // DONE
+        execute_NOTICE(client, server);
 }

@@ -2,7 +2,7 @@
 #define FT_COMMANDS_HPP
 
 #include "Client.hpp"
-#include "ft_irc.hpp"
+#include "server.hpp"
 #include "Channel.hpp"
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@
 #include <sstream>
 
 class Client;
-class ft_irc;
+class Server;
 class Channel;
 
 class CommandHandler {
@@ -24,22 +24,24 @@ class CommandHandler {
     CommandHandler();
     CommandHandler(const std::string& password);
     ~CommandHandler();
-    void handleCommand(Client& client, ft_irc& server, Channel& channel);
+    void handleCommand(Client& client, Server& server, Channel& channel);
     bool check_command(const std::string& client_input);
 
     void    execute_PASS(Client& client);
     void    execute_USER(Client& client);
-    void    execute_NICK(Client& client, const ft_irc& server);
-    void    execute_QUIT(Client& client, ft_irc& server);
+    void    execute_NICK(Client& client, const Server& server);
+    void    execute_QUIT(Client& client, Server& server);
     void    execute_ADMIN(Client& client);
-    void    execute_WHO(Client& client, const ft_irc& server);
+    void    execute_WHO(Client& client, const Server& server);
     void    execute_JOIN(Client& client, Channel& Mainchannel);
     void    execute_PART(Client& client, Channel& Mainchannel);
-    void    execute_PRIVMSG(Client& client, const ft_irc& server, Channel& Mainchannel);
-    void    execute_KICK(Client& client, ft_irc& server, Channel& Mainchannel);
-    void    execute_INVITE(Client& client, ft_irc& server, Channel& Mainchannel);
+    void    execute_PRIVMSG(Client& client, const Server& server, Channel& Mainchannel);
+    void    execute_KICK(Client& client, Server& server, Channel& Mainchannel);
+    void    execute_INVITE(Client& client, Server& server, Channel& Mainchannel);
     void    execute_MODE(Client& client, Channel& Mainchannel);
     void    execute_TOPIC(Client& client, Channel& Mainchannel);
+    void    execute_TIME(Client& client);
+    void    execute_NOTICE(Client& sender, Server& server);
 
     void    sendMessageToClient(const Client& client, const std::string& mesage);
     bool    check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list);

@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 void    CommandHandler::execute_PASS(Client& client) {
     if (client.getAuth() == 1)

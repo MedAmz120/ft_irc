@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 bool    CommandHandler::check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list) {
     for (std::map<int, Client>::const_iterator it = clients_list.begin(); it != clients_list.end(); ++it) {
@@ -9,7 +9,7 @@ bool    CommandHandler::check_nickname(const std::string& nick_name, const std::
     return true;  // Nickname does not exist
 }
 
-void    CommandHandler::execute_NICK(Client& client, const ft_irc& server)
+void    CommandHandler::execute_NICK(Client& client, const Server& server)
 {
     if (client.getAuth() == 0) {
         sendMessageToClient(client, "You must authenticate with PASS first.\n");

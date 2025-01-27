@@ -1,27 +1,31 @@
-NAME 	= ircserv
-COMPILE = c++ -W -W -W -std=c++98
-SRC		= main.cpp src/ft_irc.cpp src/ft_commands.cpp src/Client.cpp src/ADMIN.cpp \
+NAME = ircserv
+
+SRCS = main.cpp src/server.cpp src/ft_commands.cpp src/Client.cpp src/ADMIN.cpp \
 		  src/USER.cpp src/PASS.cpp src/NICK.cpp src/QUIT.cpp src/WHO.cpp src/JOIN.cpp src/Channel.cpp \
 		  src/PART.cpp src/PRIVMSG.cpp src/KICK.cpp src/MODE.cpp src/INVITE.cpp \
-		  src/TOPIC.cpp
-OBJ		= $(SRC:.cpp=.o)
-HEADS	= include/ft_irc.hpp include/ft_commands.hpp include/Client.hpp
+		  src/TOPIC.cpp src/TIME.cpp src/NOTICE.cpp
 
-all: $(NAME)
+Include = include/server.hpp include/Channel.hpp include/ft_irc.hpp include/ft_commands.hpp include/Client.hpp
 
-$(NAME): $(OBJ)
-	$(COMPILE) $(OBJ) -o $(NAME)
+OBJS = $(SRCS:.cpp=.o)
+CC = c++
+RM = rm -rf
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
+%.o : %.cpp ${Include}
+		$(CC) $(CFLAGS) -g -c $< -o $@
 
-%.o: %.cpp $(HEADS)
-	$(COMPILE) -c $< -o $@
+all:		$(NAME) 
+
+$(NAME): $(OBJS)
+			$(CC) $(OBJS) -o $(NAME)
 
 clean:
-	rm -f $(OBJ)
+				$(RM) $(OBJS) 
+			
+fclean:			clean
+				$(RM) $(NAME)
 
-fclean: clean
-	rm -f $(NAME)
+re:				fclean $(NAME)
 
-re: fclean all
-
-.PHONY: all clean
+.PHONY: all fclean clean re

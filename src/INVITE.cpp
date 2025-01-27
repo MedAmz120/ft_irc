@@ -1,7 +1,7 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 
-void CommandHandler::execute_INVITE(Client& client, ft_irc& server, Channel& Mainchannel) {
+void CommandHandler::execute_INVITE(Client& client, Server& server, Channel& Mainchannel) {
     if (client.getAuth() == 0) {
         sendMessageToClient(client, "You must authenticate with PASS first.\n");
         command_args.clear();

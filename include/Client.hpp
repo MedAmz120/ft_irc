@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ft_irc.hpp"
+#include <iostream>
 
 class Client {
     private:
@@ -9,7 +9,7 @@ class Client {
     std::string     real_name; // for identification optional
     std::string     hostname;
     std::string     servername;
-    std::string     ip;
+    std::string     IPaddress;
     int             client_fd; // The client's file descriptor
     int             auth_not; // Whether the client has successfully authenticated
     long            session_duration; // The timestamp of the client's connection (used for timeout or activity tracking).
@@ -33,6 +33,9 @@ class Client {
     void    SetRealName (const std::string& realname_it);
     void    SetHostName(const std::string& hostname_it);
     void    SetServerName(const std::string& servername_it);
+    // -------- Khalid ---------
+    void    SetFd(int fd);
+	void    setIpAdd(std::string ipaddress);
 
     // -------- Youssef --------
     std::string nickname;

@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/ft_commands.hpp"
 
 void    CommandHandler::execute_PART(Client& client, Channel& Mainchannel) {
     if (client.getAuth() == 0) {

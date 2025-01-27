@@ -4,7 +4,7 @@ Client::Client() {
     client_fd = -1;
     nick      = "NULL";
     user      = "NULL";
-    ip        = "NULL";
+    IPaddress = "NULL";
     real_name = "NULL";
     servername= "NULL";
     hostname  = "NULL";
@@ -21,7 +21,7 @@ Client::Client(int fd) {
     client_fd = fd;
     nick      = "NULL";
     user      = "NULL";
-    ip        = "NULL";
+    IPaddress = "NULL";
     real_name = "NULL";
     servername= "NULL";
     hostname  = "NULL";
@@ -90,7 +90,7 @@ Client::Client(const std::string &nick_t, const std::string &user_t, const std::
     client_fd = sock;
     nick      = nick_t;
     user      = user_t;
-    ip        = "NULL";
+    IPaddress = "NULL";
     real_name = "NULL";
     servername= "NULL";
     hostname  = host_t;
@@ -120,4 +120,12 @@ void Client::leaveChannel(const std::string &channelName)
 bool Client::isInChannel(const std::string &channelName) const
 {
     return std::find(channels.begin(), channels.end(), channelName) != channels.end();
+}
+
+void Client::SetFd(int fd) {
+    this->client_fd = fd;
+}
+
+void Client::setIpAdd(std::string ipaddress) {
+    this->IPaddress = ipaddress;
 }

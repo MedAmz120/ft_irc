@@ -1,4 +1,4 @@
-#include "../include/ft_irc.hpp"
+#include "../include/server.hpp"
 #include "../include/Client.hpp"
 #include "../include/ft_commands.hpp"
 

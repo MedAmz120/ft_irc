@@ -69,13 +69,13 @@ void    CommandHandler::handleCommand(Client& client, Server& server, Channel& c
         execute_JOIN(client, channel);
     else if (command_args[0] == "PART") // DONE
         execute_PART(client, channel);
-    else if (command_args[0] == "PRIVMSG") // DONE
+    else if (command_args[0] == "PRIVMSG") // DONE  to fix BROADCAST msg l channel mkhdamch PRIVMSG #pool message
         execute_PRIVMSG(client, server, channel);
     else if (command_args[0] == "KICK") // DONE
         execute_KICK(client, server, channel);
     else if (command_args[0] == "MODE") // DONE
         execute_MODE(client, channel);
-    else if (command_args[0] == "INVITE") // DONE but add a log message on channel::inviteUser() method
+    else if (command_args[0] == "INVITE") // DONE but add a log message on channel::inviteUser() method  to fix mktwslch invite l recipient INVITE channel nickname
         execute_INVITE(client, server, channel);
     else if (command_args[0] == "TOPIC") // DONE but Channel::setTopic() doesn't check properly if the channel is topic restricted and must add log message also
         execute_TOPIC(client, channel);

@@ -103,11 +103,17 @@ bool Channel::isOperator(Client *user) const
     return std::find(operators.begin(), operators.end(), user) != operators.end();
 }
 
+void    Channel::sendMessageToClient(const Client& client, const std::string& message)
+{
+        send (client.getClientFd(), message.c_str(), message.size(), 0);
+}
+
 void Channel::broadcastMessage(const std::string &message)
 {
     for (std::vector<Client *>::iterator it = users.begin(); it != users.end(); ++it)
     {
-        send((*it)->socket, message.c_str(), message.size(), 0);
+        // send((*it)->socket, message.c_str(), message.size(), 0);
+        sendMessageToClient(**it, message);
     }
 }
 

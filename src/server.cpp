@@ -95,7 +95,7 @@ void Server::handleIncomingData(int fd, Channel& channel)
 		if (command.check_command(buff)) {
                     command.handleCommand(clients_list[fd], *this, channels);
         } else {
-            command.sendMessageToClient(clients_list[new_socket], "Command not exist\n");
+            command.sendMessageToClient(clients_list[fd], "Command not exist\n");
         }
 	}
 }

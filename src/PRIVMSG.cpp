@@ -35,6 +35,7 @@ void    CommandHandler::execute_PRIVMSG(Client& client, const Server& server, Ch
             else {
                 if (channel->isUserInChannel(&client)) {
                 channel->broadcastMessage(full_message);
+                std::cout << "-----> " << full_message << std::endl;
                 std::cout << "Log: "<< client.getUser() << " send \"" << full_message << "\" To " << command_args[1] << std::endl;           
                 command_args.clear();
                 return ;

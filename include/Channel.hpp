@@ -48,4 +48,5 @@ public:
 
     // --------------- Mohamed ------------
     const std::string& getPassword();
+    void sendMessageToClient(const Client& client, const std::string& message);
 };

@@ -96,6 +96,7 @@ void    CommandHandler::execute_JOIN(Client& client, Channel& Mainchannel) {
     } 
     else {
         // New channel was created and the client was added
+        channel->addUser(&client);
         sendMessageToClient(client, "You have successfully created and joined the channel: " + channelName + "\n");
         channel->broadcastMessage(client.getNickname() + " has created and joined the channel.\n");
         std::cout << "Log: " << client.getUser() << " has created and joined the channel " << command_args[1] << std::endl;

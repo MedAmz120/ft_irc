@@ -6,7 +6,7 @@
 /*   By: ychihab <ychihab@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 20:30:55 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/26 00:41:56 by ychihab          ###   ########.fr       */
+/*   Updated: 2025/01/28 13:38:26 by ychihab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,24 @@ Channel::Channel() : clientLimit(0), isInviteOnly(false), isTopicRestricted(fals
 
 Channel::Channel(const std::string &name) : name(name), clientLimit(0), isInviteOnly(false), isTopicRestricted(false) {}
 
+Channel::~Channel()
+{
+    std::map<int, Client *>::iterator it = clientsMap.begin();
+    while (it != clientsMap.end())
+    {
+        if (it->second)
+        {
+            it->second->leaveChannel(name);
+        }
+        ++it;
+    }
+    clientsMap.clear();
+}
+
 Channel *Channel::createChannel(const std::string &name, Client *creator)
 {
     if (channels.find(name) != channels.end())
-    {
         return (NULL);
-    }
     Channel *newChannel = new Channel(name);
     newChannel->addClient(creator);
     newChannel->addOperator(creator);
@@ -39,7 +51,7 @@ Channel *Channel::getChannel(const std::string &name)
     std::map<std::string, Channel *>::iterator it = channels.find(name);
     if (it != channels.end())
     {
-        return (it->second);
+        return it->second;
     }
     return NULL;
 }
@@ -60,42 +72,56 @@ bool Channel::addClient(Client *client, const std::string &clientProvidedPasswor
 {
     if (isClientLimitReached())
     {
+        client->writeBuffer += ":server 471 " + name + " :Cannot join channel (+l)\r\n";
         return false;
     }
 
     if (isInviteOnly && !isClientInvited(client))
     {
+        client->writeBuffer += ":server 473 " + name + " :Cannot join channel (+i)\r\n";
         return false;
     }
 
     if (!password.empty() && clientProvidedPassword != password)
     {
+        client->writeBuffer += ":server 475 " + name + " :Cannot join channel (+k)\r\n";
         return false;
     }
 
-    if (clientsMap.find(client->nickname) == clientsMap.end())
+    if (clientsMap.find(client->socket) == clientsMap.end())
     {
-        clientsMap[client->nickname] = client;
+        clientsMap[client->socket] = client;
         client->joinChannel(name);
         return true;
     }
-
     return false;
 }
 
 void Channel::removeClient(Client *client)
 {
-    std::map<std::string, Client *>::iterator it = clientsMap.find(client->nickname);
+    if (!isClientInChannel(client))
+    {
+        client->writeBuffer += ":server 442 " + name + " :You're not on that channel\r\n";
+        return;
+    }
+
+    std::map<int, Client *>::iterator it = clientsMap.find(client->socket);
     if (it != clientsMap.end())
     {
         clientsMap.erase(it);
+        removeOperator(client);
         client->leaveChannel(name);
     }
 }
 
 bool Channel::isClientInChannel(Client *client) const
 {
-    return (clientsMap.find(client->nickname) != clientsMap.end());
+    return (clientsMap.find(client->socket) != clientsMap.end());
+}
+
+const std::vector<Client *> &Channel::getInvitedClients() const
+{
+    return invitedClients;
 }
 
 bool Channel::isClientInvited(Client *client) const
@@ -106,18 +132,14 @@ bool Channel::isClientInvited(Client *client) const
 void Channel::addOperator(Client *client)
 {
     if (std::find(operators.begin(), operators.end(), client) == operators.end())
-    {
         operators.push_back(client);
-    }
 }
 
 void Channel::removeOperator(Client *client)
 {
     std::vector<Client *>::iterator it = std::find(operators.begin(), operators.end(), client);
     if (it != operators.end())
-    {
         operators.erase(it);
-    }
 }
 
 bool Channel::isOperator(Client *client) const
@@ -127,9 +149,11 @@ bool Channel::isOperator(Client *client) const
 
 void Channel::broadcastMessage(const std::string &message)
 {
-    for (std::map<std::string, Client *>::iterator it = clientsMap.begin(); it != clientsMap.end(); ++it)
+    std::map<int, Client *>::iterator it = clientsMap.begin();
+    while (it != clientsMap.end())
     {
-        send(it->second->socket, message.c_str(), message.size(), 0);
+        it->second->writeBuffer += message;
+        ++it;
     }
 }
 
@@ -143,9 +167,9 @@ bool Channel::getInviteOnly() const
     return (isInviteOnly);
 }
 
-void Channel::setPassword(const std::string &password)
+void Channel::setPassword(const std::string &pwd)
 {
-    this->password = password;
+    password = pwd;
 }
 
 std::string Channel::getPassword() const
@@ -160,9 +184,7 @@ void Channel::setClientLimit(int limit)
 
 bool Channel::isClientLimitReached() const
 {
-    if (clientLimit == 0)
-        return (false);
-    return (clientsMap.size() >= (size_t)(clientLimit));
+    return (clientLimit > 0 && clientsMap.size() >= static_cast<size_t>(clientLimit));
 }
 
 std::string Channel::getName() const
@@ -178,133 +200,141 @@ std::string Channel::getTopic() const
 std::vector<Client *> Channel::getClients() const
 {
     std::vector<Client *> clients;
-    for (std::map<std::string, Client *>::const_iterator it = clientsMap.begin(); it != clientsMap.end(); ++it)
+
+    std::map<int, Client *>::const_iterator it = clientsMap.begin();
+
+    while (it != clientsMap.end())
     {
         clients.push_back(it->second);
+        ++it;
     }
-    return (clients);
+
+    return clients;
 }
 
-std::vector<Client *> Channel::getOperators() const
-{
-    return (operators);
-}
+std::vector<Client *> Channel::getOperators() const { return (operators); }
 
 void Channel::kickClient(Client *operatorClient, Client *targetClient, const std::string &reason)
 {
     if (!isOperator(operatorClient))
     {
+        operatorClient->writeBuffer += ":server 482 " + name + " :You're not a channel operator\r\n";
         return;
     }
+
     if (!isClientInChannel(targetClient))
     {
+        operatorClient->writeBuffer += ":server 441 " + targetClient->nickname + " " + name + " :They aren't on that channel\r\n";
         return;
     }
+
     removeClient(targetClient);
-    std::string kickMessage = ":" + operatorClient->nickname + " KICK " + name + " " + targetClient->nickname + " :" + reason + "\r\n";
-    broadcastMessage(kickMessage);
+    std::string kickMsg = ":" + operatorClient->nickname + " KICK " + name + " " + targetClient->nickname + " :" + reason + "\r\n";
+    broadcastMessage(kickMsg);
 }
 
 void Channel::inviteClient(Client *operatorClient, Client *targetClient)
 {
     if (!isOperator(operatorClient))
     {
+        operatorClient->writeBuffer += ":server 482 " + name + " :You're not a channel operator\r\n";
         return;
     }
 
     if (isClientInChannel(targetClient))
     {
+        operatorClient->writeBuffer += ":server 443 " + targetClient->nickname + " " + name + " :is already on channel\r\n";
         return;
     }
+
     invitedClients.push_back(targetClient);
-    std::string inviteMessage = ":" + operatorClient->nickname + " INVITE " + targetClient->nickname + " " + name + "\r\n";
-    send(targetClient->socket, inviteMessage.c_str(), inviteMessage.size(), 0);
+    std::string inviteMsg = ":" + operatorClient->nickname + " INVITE " + targetClient->nickname + " " + name + "\r\n";
+    targetClient->writeBuffer += inviteMsg;
 }
 
 void Channel::setTopic(Client *client, const std::string &newTopic)
 {
     if (isTopicRestricted && !isOperator(client))
     {
+        client->writeBuffer += ":server 482 " + name + " :You're not a channel operator\r\n";
         return;
     }
+
     topic = newTopic;
-    std::string topicMessage = ":" + client->nickname + " TOPIC " + name + " :" + topic + "\r\n";
-    broadcastMessage(topicMessage);
+    std::string topicMsg = ":" + client->nickname + " TOPIC " + name + " :" + topic + "\r\n";
+    broadcastMessage(topicMsg);
 }
 
 bool Channel::getTopic(Client *client)
 {
     if (!isClientInChannel(client))
     {
+        client->writeBuffer += ":server 442 " + name + " :You're not on that channel\r\n";
         return (false);
     }
-    std::string topicMessage = ":" + client->nickname + " 332 " + name + " :" + topic + "\r\n";
-    send(client->socket, topicMessage.c_str(), topicMessage.size(), 0);
-    return true;
+
+    std::string topicMsg = ":" + client->nickname + " 332 " + name + " :" + topic + "\r\n";
+    client->writeBuffer += topicMsg;
+    return (true);
 }
 
 void Channel::setMode(Client *client, const std::string &mode, const std::string &argument)
 {
     if (!isOperator(client))
     {
+        client->writeBuffer += ":server 482 " + name + " :You're not a channel operator\r\n";
         return;
     }
+
     if (mode == "+i")
-    {
         isInviteOnly = true;
-    }
     else if (mode == "-i")
-    {
         isInviteOnly = false;
-    }
     else if (mode == "+k")
-    {
         setPassword(argument);
-    }
     else if (mode == "-k")
-    {
         setPassword("");
-    }
-    else if (mode == "+o")
+    else if (mode == "+o" || mode == "-o")
     {
-        Client *targetClient = findClientByNickname(argument);
-        if (targetClient)
+        Client *target = findClientByNickname(argument);
+        if (!target)
         {
-            addOperator(targetClient);
+            client->writeBuffer += ":server 401 " + argument + " :No such nick\r\n";
+            return;
         }
-    }
-    else if (mode == "-o")
-    {
-        Client *targetClient = findClientByNickname(argument);
-        if (targetClient)
+        if (mode == "+o")
         {
-            removeOperator(targetClient);
+            addOperator(target);
+        }
+        else
+        {
+            removeOperator(target);
         }
     }
     else if (mode == "+l")
     {
         int limit;
         std::istringstream iss(argument);
-        if (!(iss >> limit) || limit < 0)
-        {
-            return;
-        }
-        setClientLimit(limit);
+        if (iss >> limit && limit > 0)
+            setClientLimit(limit);
     }
     else if (mode == "-l")
-    {
         setClientLimit(0);
-    }
-    std::string modeMessage = ":" + client->nickname + " MODE " + name + " " + mode + " " + argument + "\r\n";
-    broadcastMessage(modeMessage);
+
+    std::string modeMsg = ":" + client->nickname + " MODE " + name + " " + mode + " " + argument + "\r\n";
+    broadcastMessage(modeMsg);
 }
 
 Client *Channel::findClientByNickname(const std::string &nickname)
 {
-    std::map<std::string, Client *>::iterator it = clientsMap.find(nickname);
-    if (it != clientsMap.end())
+    std::map<int, Client *>::iterator it = clientsMap.begin();
+
+    while (it != clientsMap.end())
     {
-        return (it->second);
+        if (it->second->nickname == nickname)
+            return it->second;
+        ++it;
     }
-    return (NULL);
+
+    return NULL;
 }

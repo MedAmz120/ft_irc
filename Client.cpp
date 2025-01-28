@@ -6,16 +6,16 @@
 /*   By: ychihab <ychihab@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 17:20:15 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/25 22:32:24 by ychihab          ###   ########.fr       */
+/*   Updated: 2025/01/27 00:59:52 by ychihab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client() : socket(-1), isOperator(false) {}
+Client::Client() : socket(-1) {}
 
 Client::Client(const std::string &nick, const std::string &user, const std::string &host, int sock)
-    : nickname(nick), username(user), hostname(host), socket(sock), isOperator(false) {}
+    : nickname(nick), username(user), hostname(host), socket(sock) {}
 
 void Client::joinChannel(const std::string &channelName)
 {

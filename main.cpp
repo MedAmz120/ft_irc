@@ -6,107 +6,77 @@
 /*   By: ychihab <ychihab@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 21:45:12 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/25 22:32:56 by ychihab          ###   ########.fr       */
+/*   Updated: 2025/01/28 13:29:24 by ychihab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include <vector>
-#include "Channel.hpp"
 #include "Client.hpp"
+#include "Channel.hpp"
 
 int main()
 {
-    std::vector<Client *> clients;
+    Client client1("KHALID", "user1", "localhost", 1);
+    Client client2("MOHAMED", "user2", "localhost", 2);
+    Client client3("YOUSSEF", "user3", "localhost", 3);
 
-    int numClients;
-    std::cout << "Enter the number of clients you want to create: ";
-    std::cin >> numClients;
-
-    std::cout << "\n=== Creating Clients ===" << std::endl;
-    for (int i = 0; i < numClients; ++i)
+    Channel *generalChannel = Channel::createChannel("#general", &client1);
+    if (!generalChannel)
     {
-        std::string nickname, username, hostname;
-        int socket;
-
-        std::cout << "\nEnter details for Client " << (i + 1) << ":" << std::endl;
-        std::cout << "Nickname: ";
-        std::cin >> nickname;
-        std::cout << "Username: ";
-        std::cin >> username;
-        std::cout << "Hostname: ";
-        std::cin >> hostname;
-        std::cout << "Socket: ";
-        std::cin >> socket;
-
-        Client *newClient = new Client(nickname, username, hostname, socket);
-        clients.push_back(newClient);
-    }
-
-    std::string channelName;
-    std::cout << "\nEnter the name of the channel to create: ";
-    std::cin >> channelName;
-
-    Channel *channel = Channel::createChannel(channelName, clients[0]);
-    if (!channel)
-    {
-        std::cerr << "Failed to create the channel '" << channelName << "'." << std::endl;
+        std::cerr << "Error: The #general channel already exists or could not be created." << std::endl;
         return 1;
     }
 
-    std::cout << "Channel '" << channelName << "' created successfully by " << clients[0]->nickname << "." << std::endl;
+    generalChannel->addClient(&client1);
+    generalChannel->addClient(&client2);
+    generalChannel->addClient(&client3);
 
-    std::cout << "\n=== Adding Clients to the Channel ===" << std::endl;
-    for (std::size_t i = 1; i < clients.size(); ++i)
+    std::cout << "Clients in #general:" << std::endl;
+    std::vector<Client *> clients = generalChannel->getClients();
+    std::vector<Client *>::const_iterator it = clients.begin();
+    while (it != clients.end())
     {
-        if (channel->addClient(clients[i], ""))
-        {
-            std::cout << clients[i]->nickname << " has joined the channel '" << channelName << "'." << std::endl;
-        }
-        else
-        {
-            std::cerr << "Error: Failed to add " << clients[i]->nickname << " to the channel." << std::endl;
-        }
+        std::cout << "- " << (*it)->nickname << std::endl;
+        ++it;
     }
 
-    channel->setInviteOnly(true);
-    std::cout << "\nThe channel is now in invite-only mode." << std::endl;
+    std::cout << "\n KHALID sends a message to #general:" << std::endl;
+    generalChannel->broadcastMessage(":Alice PRIVMSG #general :Hello everyone!\r\n");
 
-    if (!channel->addClient(clients.back(), ""))
+    generalChannel->addOperator(&client1);
+    std::cout << "\n KHALID is now an operator of #general." << std::endl;
+
+    std::cout << "\n KHALID kicks MOHAMED out of #general:" << std::endl;
+    generalChannel->kickClient(&client1, &client2, "You have been kicked!");
+
+    std::cout << "\nRemaining clients in #general:" << std::endl;
+    clients = generalChannel->getClients();
+    it = clients.begin();
+    while (it != clients.end())
     {
-        std::cout << clients.back()->nickname << " could not join the channel '" << channelName << "' because it's invite-only." << std::endl;
+        std::cout << "- " << (*it)->nickname << std::endl;
+        ++it;
     }
 
-    channel->inviteClient(clients[0], clients.back());
-    if (channel->addClient(clients.back(), ""))
+    std::cout << "\n KHALID changes the topic of #general:" << std::endl;
+    generalChannel->setTopic(&client1, "Welcome to #general!");
+
+    std::cout << "Topic of #general: " << generalChannel->getTopic() << std::endl;
+
+    std::cout << "\n KHALID invites MOHAMED to join #general:" << std::endl;
+    generalChannel->inviteClient(&client1, &client3);
+
+    std::cout << "Clients invited to #general:" << std::endl;
+    const std::vector<Client *> &invitedClients = generalChannel->getInvitedClients();
+    std::vector<Client *>::const_iterator inviteIt = invitedClients.begin();
+    while (inviteIt != invitedClients.end())
     {
-        std::cout << clients.back()->nickname << " has joined the channel '" << channelName << "' after being invited." << std::endl;
+        std::cout << "- " << (*inviteIt)->nickname << std::endl;
+        ++inviteIt;
     }
 
-    std::string newTopic;
-    std::cout << "\nEnter a new topic for the channel '" << channelName << "': ";
-    std::cin.ignore();
-    std::getline(std::cin, newTopic);
-    channel->setTopic(clients[0], newTopic);
-    std::cout << "The channel's topic is now: " << channel->getTopic() << std::endl;
+    std::cout << "\n Deleting the #general channel..." << std::endl;
+    Channel::deleteChannel("#general");
 
-    std::string reason;
-    std::cout << "\nEnter a reason to kick the second client (" << clients[1]->nickname << "): ";
-    std::getline(std::cin, reason);
-    channel->kickClient(clients[0], clients[1], reason);
-    if (!channel->isClientInChannel(clients[1]))
-    {
-        std::cout << clients[1]->nickname << " has been kicked from the channel '" << channelName << "'." << std::endl;
-    }
-
-    Channel::deleteChannel(channelName);
-    std::size_t i = 0;
-    while (i < clients.size())
-    {
-        delete clients[i];
-        i++;
-    }
-
-    std::cout << "\nProgram finished successfully. All resources have been freed." << std::endl;
     return 0;
 }

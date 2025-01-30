@@ -21,7 +21,7 @@
 #include <map>
 #include "ft_commands.hpp"
 #include "Client.hpp"
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024
 // ------- Mohamed -------
 
 #define COLOR_RED "\e[1;31m"

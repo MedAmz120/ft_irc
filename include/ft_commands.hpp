@@ -25,7 +25,7 @@ class CommandHandler {
     CommandHandler(const std::string& password);
     ~CommandHandler();
     void handleCommand(Client& client, Server& server, Channel& channel);
-    bool check_command(const std::string& client_input);
+    int check_command(const std::string& client_input);
 
     void    execute_PASS(Client& client);
     void    execute_USER(Client& client);
@@ -48,6 +48,7 @@ class CommandHandler {
     void    display_client_WHO(Client& client, const std::string& nick_name, const std::map<int, Client>& clients_list);
     bool    check_channel_name(const std::string& name, Client& client);
     bool    check_mode(const std::string& mode, Client& client, const std::string& command_args);
+    void    handleLSCAP(const std::string& client_input, Client& client, Server& server);
 };
 
 

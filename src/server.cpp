@@ -19,11 +19,6 @@ void Server::signalHandler(int signalNumber)
 
 void	Server::closeAllConnections()
 {
-	// for(size_t i = 0; i < clientList.size(); i++)
-	// {
-	// 	std::cout << COLOR_RED << "Client <" << clientList[i].getClientFd() << "> disconnected." << COLOR_WHITE << std::endl;
-	// 	close(clientList[i].getClientFd());
-	// }
 	// ------- MOHAMED -----
     std::map<int, Client>::iterator it;
     for(it = clients_list.begin(); it != clients_list.end(); ++it)
@@ -109,15 +104,6 @@ void Server::removeClient(int fd)
 			break;
 		}
 	}
-	// for(size_t i = 0; i < clientList.size(); i++)
-	// {
-	// 	if (clientList[i].getClientFd() == fd)
-	// 	{
-	// 		clientList.erase(clientList.begin() + i);
-	// 		break;
-	// 	}
-	// }
-
 	// --------- Mohamed --------
 	// method checks if the key exists before attempting to erase it this prevents attempts to remove non-existent keys
 	if (clients_list.count(fd) > 0) {

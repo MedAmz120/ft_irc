@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ychihab <ychihab@student.42.fr>            +#+  +:+       +#+        */
+/*   By: kfouad <kfouad@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 20:30:55 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/23 21:05:38 by ychihab          ###   ########.fr       */
+/*   Updated: 2025/01/30 16:52:40 by kfouad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,11 @@ Client *Channel::findUserByNickname(const std::string &nickname)
     }
 
     return NULL;
+}
+
+bool Channel::getInviteOnly() const
+{
+    return (isInviteOnly);
 }
 
 // ---------- Mohamed -----------

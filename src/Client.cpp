@@ -83,6 +83,18 @@ const   std::string& Client::getNickname() const {
     return this->nick;
 }
 
+void    Client::addInvitations(const std::string& channel_name) {
+    invitations.push_back(channel_name);
+}
+
+bool    Client::checkInvite(const std::string& channelName) {
+    for (size_t i = 0; i < invitations.size(); i++)
+    {
+        if (invitations[i] == channelName)
+            return true;
+    }
+    return false;
+}
 
 // -------------- YOUSSEF ---------------
 

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Channel.hpp"
 #include <iostream>
 
 class Client {
@@ -14,6 +14,7 @@ class Client {
     int             auth_not; // Whether the client has successfully authenticated
     long            session_duration; // The timestamp of the client's connection (used for timeout or activity tracking).
     bool            joinedchannel_not; // Whether the client has joined a channel
+    std::vector<std::string> invitations;
 
 
     public:
@@ -33,6 +34,7 @@ class Client {
     void    SetRealName (const std::string& realname_it);
     void    SetHostName(const std::string& hostname_it);
     void    SetServerName(const std::string& servername_it);
+    void    addInvitations(const std::string& channel_name);
     // -------- Khalid ---------
     void    SetFd(int fd);
 	void    setIpAdd(std::string ipaddress);
@@ -45,6 +47,8 @@ class Client {
     void joinChannel(const std::string &channelName);
     void leaveChannel(const std::string &channelName);
     bool isInChannel(const std::string &channelName) const;
+
+    bool    checkInvite(const std::string& channelName);
 
     ~Client();
     Client (const Client& copie);

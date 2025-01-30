@@ -46,6 +46,7 @@ public:
     void getTopic(Client* user);
     void setMode(Client* user, const std::string& mode, const std::string& argument = "");
 
+    bool getInviteOnly() const;
     // --------------- Mohamed ------------
     const std::string& getPassword();
     void sendMessageToClient(const Client& client, const std::string& message);

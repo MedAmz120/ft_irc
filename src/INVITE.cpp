@@ -33,6 +33,15 @@ void CommandHandler::execute_INVITE(Client& client, Server& server, Channel& Mai
         command_args.clear();
         return;
     }
+    if (!channel->isOperator(&client)) {
+        sendMessageToClient(client, "Error: You must be an operator in this channel to send invitations.\n");
+        command_args.clear();
+        return;
+    }
     channel->inviteUser(&client, &recipient);
+    std::string recipient_name = recipient.getNickname();
+    recipient.addInvitations(channel->getName());
+    sendMessageToClient(recipient,  recipient_name + " invited you to join channel " + channel->getName() + '\n');
+    sendMessageToClient(client,  recipient_name + " has been invited you to join channel " + channel->getName() + '\n');
     command_args.clear();
 }

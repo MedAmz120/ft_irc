@@ -27,15 +27,24 @@ void CommandHandler::execute_TOPIC(Client& client, Channel& Mainchannel) {
         command_args.clear();
         return;
     }
-    if (command_args.size() == 2) {
-        sendMessageToClient(client, "Current topic for " + channelName + ": " + channel->getTopic());
+    else if (command_args.size() == 2 && !channel->getTopic().empty()) {
+        sendMessageToClient(client, "Current topic for " + channelName + ": " + channel->getTopic() + '\n');
     } 
-    else  
+    else if (channel->getTopic().empty() && command_args.size() == 2) {
+        sendMessageToClient(client, "No Topic is set for channel yet\n");
+    }
+    else if (!channel->isOperator(&client) && command_args.size() >= 3) {
+        sendMessageToClient(client, "Only Channel operators can change Channel Topic\n");
+    }
+    else if (channel->getTopicRestricted()) {
+        sendMessageToClient(client, "Topic Restricted Mode is Activated on Channel cannot change\n");
+    }
+    else
     {
         std::string newTopic = command_args[2];
         channel->setTopic(&client, newTopic);
-        // sendMessageToClient(client, "Topic changed for " + channelName + "." + '\n');
-        // std::cout << "Log: " << client.getNickname() << " Set Topic to "  << channel->getTopic() << " To The channel name " << channel->getName() << std::endl;
+        sendMessageToClient(client, "Topic changed for " + channelName + "." + '\n');
+        std::cout << "Log: " << client.getNickname() << " Set Topic to "  << channel->getTopic() << " To The channel name " << channel->getName() << std::endl;
     }
     command_args.clear();
 }

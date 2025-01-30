@@ -85,6 +85,12 @@ void CommandHandler::execute_JOIN(Client &client, Channel &Mainchannel)
             command_args.clear();
             return;
         }
+        if (channel->isClientLimitReached())
+        {
+            sendMessageToClient(client, "Cannot Join " + channelName + " User limist has been reached" + "\n");
+            command_args.clear();
+            return;
+        }
         else
         {
             if (!channel->getPassword().empty())

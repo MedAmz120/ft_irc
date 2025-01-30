@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kfouad <kfouad@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 20:30:55 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/30 16:52:40 by kfouad           ###   ########.fr       */
+/*   Updated: 2025/01/30 20:49:26 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 
 std::map<std::string, Channel *> Channel::channels;
 
-Channel::Channel() : userLimit(0), isInviteOnly(false), isTopicRestricted(false) {}
+Channel::Channel() : userLimit(0), isInviteOnly(false), istopicrestricted(false) {}
 
-Channel::Channel(const std::string &name) : name(name), userLimit(0), isInviteOnly(false), isTopicRestricted(false) {}
+Channel::Channel(const std::string &name) : name(name), userLimit(0), isInviteOnly(false), istopicrestricted(false) {}
 
 Channel *Channel::createChannel(const std::string &name, Client *creator)
 {
@@ -156,21 +156,17 @@ void Channel::kickUser(Client *operatorUser, Client *targetUser, const std::stri
 {
     if (!isOperator(operatorUser))
     {
-        std::string errorMessage = ":" + operatorUser->nickname + " 482 " + name + " :You're not a channel operator\r\n";
-        send(operatorUser->socket, errorMessage.c_str(), errorMessage.size(), 0);
         return;
     }
 
     if (!isUserInChannel(targetUser))
     {
-        std::string errorMessage = ":" + operatorUser->nickname + " 441 " + targetUser->nickname + " " + name + " :They aren't on that channel\r\n";
-        send(operatorUser->socket, errorMessage.c_str(), errorMessage.size(), 0);
         return;
     }
 
-    removeUser(targetUser);
-    std::string kickMessage = ":" + operatorUser->nickname + " KICK " + name + " " + targetUser->nickname + " :" + reason + "\r\n";
+    std::string kickMessage = ":" + operatorUser->nickname + " KICKED " + targetUser->nickname + "For : " + reason + "\r\n";
     broadcastMessage(kickMessage);
+    removeUser(targetUser);
 }
 
 void Channel::inviteUser(Client *operatorUser, Client *targetUser)
@@ -192,10 +188,14 @@ void Channel::inviteUser(Client *operatorUser, Client *targetUser)
     std::string inviteMessage = ":" + operatorUser->nickname + " INVITE " + targetUser->nickname + " " + name + "\r\n";
     send(targetUser->socket, inviteMessage.c_str(), inviteMessage.size(), 0);
 }
+bool    Channel::getTopicRestricted() {
+    return istopicrestricted;
+}
+
 
 void Channel::setTopic(Client *user, const std::string &newTopic)
 {
-    if (isTopicRestricted && !isOperator(user))
+    if (istopicrestricted && !isOperator(user))
     {
         std::string errorMessage = ":" + user->nickname + " 482 " + name + " :You're not a channel operator\r\n";
         send(user->socket, errorMessage.c_str(), errorMessage.size(), 0);
@@ -203,7 +203,7 @@ void Channel::setTopic(Client *user, const std::string &newTopic)
     }
 
     topic = newTopic;
-    std::string topicMessage = ":" + user->nickname + " TOPIC " + name + " :" + topic + "\r\n";
+    std::string topicMessage = user->nickname + " changed " + name + " channel Topic to : " + topic + "\r\n";
     broadcastMessage(topicMessage);
 }
 
@@ -213,50 +213,55 @@ void Channel::getTopic(Client *user)
     send(user->socket, topicMessage.c_str(), topicMessage.size(), 0);
 }
 
-void Channel::setMode(Client *user, const std::string &mode, const std::string &argument)
-{
-    if (!isOperator(user))
-    {
-        std::string errorMessage = ":" + user->nickname + " 482 " + name + " :You're not a channel operator\r\n";
-        send(user->socket, errorMessage.c_str(), errorMessage.size(), 0);
-        return;
-    }
+// void Channel::setMode(Client *user, const std::string &mode, const std::string &argument)
+// {
+//     if (!isOperator(user))
+//     {
+//         std::string errorMessage = ":" + user->nickname + " 482 " + name + " :You're not a channel operator\r\n";
+//         send(user->socket, errorMessage.c_str(), errorMessage.size(), 0);
+//         return;
+//     }
 
-    if (mode == "+i")
-    {
-        isInviteOnly = true;
-    }
-    else if (mode == "-i")
-    {
-        isInviteOnly = false;
-    }
-    else if (mode == "+k")
-    {
-        setPassword(argument);
-    }
-    else if (mode == "-k")
-    {
-        setPassword("");
-    }
-    else if (mode == "+o")
-    {
-        Client *targetUser = findUserByNickname(argument);
-        if (targetUser)
-        {
-            addOperator(targetUser);
-        }
-    }
-    else if (mode == "-o")
-    {
-        Client *targetUser = findUserByNickname(argument);
-        if (targetUser)
-        {
-            removeOperator(targetUser);
-        }
-    }
-    std::string modeMessage = ":" + user->nickname + " MODE " + name + " " + mode + " " + argument + "\r\n";
-    broadcastMessage(modeMessage);
-}
+//     if (mode == "+i")
+//     {
+//         isInviteOnly = true;
+//     }
+//     else if (mode == "-i")
+//     {
+//         isInviteOnly = false;
+//     }
+//     else if (mode == "+k")
+//     {
+//         setPassword(argument);
+//     }
+//     else if (mode == "-k")
+//     {
+//         setPassword("");
+//     }
+//     else if (mode == "+o")
+//     {
+//         Client *targetUser = findUserByNickname(argument);
+//         if (targetUser)
+//         {
+//             addOperator(targetUser);
+//         }
+//     }
+//     else if (mode == "-o")
+//     {
+//         Client *targetUser = findUserByNickname(argument);
+//         if (targetUser)
+//         {
+//             removeOperator(targetUser);
+//         }
+//     }
+//     else if (mode == "+l")
+//     {
+//         if (!argument.empty())
+
+//     }
+//     std::string modeMessage = ":" + user->nickname + " MODE " + name + " " + mode + " " + argument + "\r\n";
+//     broadcastMessage(modeMessage);
+// }
 
 Client *Channel::findUserByNickname(const std::string &nickname)
 {
@@ -273,9 +278,84 @@ Client *Channel::findUserByNickname(const std::string &nickname)
     return NULL;
 }
 
+void Channel::setClientLimit(int limit)
+{
+    clientLimit = limit;
+}
+
+bool Channel::isClientLimitReached() const
+{
+    return (clientLimit > 0 && users.size() >= static_cast<size_t>(clientLimit));
+}
+
+void  Channel::setTopicChangeAbleOrNot(bool yes_no) {
+    istopicrestricted = yes_no;
+
+}
+
+
+void Channel::setMode(Client *client, const std::string &mode, const std::string &argument)
+{
+    if (!isOperator(client))
+    {
+        std::string errorMessage = ":" + client->nickname + " 482 " + name + " :You're not a channel operator\r\n";
+        send(client->socket, errorMessage.c_str(), errorMessage.size(), 0);
+        return;
+    }
+
+    if (mode == "+i")
+        isInviteOnly = true;
+    else if (mode == "-i")
+        isInviteOnly = false;
+    else if (mode == "+k")
+        setPassword(argument);
+    else if (mode == "-k")
+        setPassword("");
+    else if (mode == "+t")
+        setTopicChangeAbleOrNot(true);    
+    else if (mode == "-t")
+        setTopicChangeAbleOrNot(false);
+    else if (mode == "+o" || mode == "-o")
+    {
+        Client *target = findUserByNickname(argument);
+        if (!target)
+        {
+            std::string errorMessage = ":Error: No such user with this nickname\n";
+            send(client->socket, errorMessage.c_str(), errorMessage.size(), 0);
+            return;
+        }
+        if (mode == "+o")
+        {
+            addOperator(target);
+        }
+        else
+        {
+            removeOperator(target);
+        }
+    }
+    else if (mode == "+l")
+    {
+        int limit;
+        std::istringstream iss(argument);
+        if (iss >> limit && limit > 0)
+            setClientLimit(limit);
+    }
+    else if (mode == "-l")
+        setClientLimit(0);
+
+    std::string modeMsg = ":" + client->nickname + " MODE " + name + " " + mode + " " + argument + "\r\n";
+    broadcastMessage(modeMsg);
+}
+
+
 bool Channel::getInviteOnly() const
 {
     return (isInviteOnly);
+}
+
+Channel::~Channel()
+{
+
 }
 
 // ---------- Mohamed -----------

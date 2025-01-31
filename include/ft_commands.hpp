@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 22:30:44 by moamzil           #+#    #+#             */
-/*   Updated: 2025/01/31 22:30:47 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 23:16:05 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ class CommandHandler {
     void    execute_PRIVMSG(Client& client, const Server& server, Channel& Mainchannel);
     void    execute_KICK(Client& client, Server& server, Channel& Mainchannel);
     void    execute_INVITE(Client& client, Server& server, Channel& Mainchannel);
-    void    execute_MODE(Client& client, Channel& Mainchannel);
+    void    execute_MODE(Client& client, Channel& Mainchannel, Server& server);
     void    execute_TOPIC(Client& client, Channel& Mainchannel);
     void    execute_TIME(Client& client);
-    void    execute_NOTICE(Client& sender, Server& server);
+    void    execute_NOTICE(Client& sender, Server& server, Channel& Mainchannel);
 
     void    sendMessageToClient(const Client& client, const std::string& mesage);
     bool    check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list);

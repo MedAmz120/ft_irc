@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 22:33:07 by moamzil           #+#    #+#             */
-/*   Updated: 2025/01/31 22:33:09 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 23:02:39 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,22 @@ void CommandHandler::execute_TOPIC(Client& client, Channel& Mainchannel) {
         return;
     }
     else if (command_args.size() == 2 && !channel->getTopic().empty()) {
-        sendMessageToClient(client, "Current topic for " + channelName + ": " + channel->getTopic() + '\n');
+        if (channel->isUserInChannel(&client))
+            sendMessageToClient(client, "Current topic for " + channelName + ": " + channel->getTopic() + '\n');
+        else
+            sendMessageToClient(client, "Error: You Must be a channel member to display the channel Topic\n");
     } 
     else if (channel->getTopic().empty() && command_args.size() == 2) {
         sendMessageToClient(client, "No Topic is set for channel yet\n");
     }
+    else if (!channel->isUserInChannel(&client) && command_args.size() >= 3) {
+        sendMessageToClient(client, "Error: You Must be a member to change or display the channel Topic\n");
+    }
     else if (!channel->isOperator(&client) && command_args.size() >= 3) {
-        sendMessageToClient(client, "Only Channel operators can change Channel Topic\n");
+        sendMessageToClient(client, "Error: Only Channel operators can change Channel Topic\n");
     }
     else if (channel->getTopicRestricted()) {
-        sendMessageToClient(client, "Topic Restricted Mode is Activated on Channel cannot change\n");
+        sendMessageToClient(client, "Error: Topic Restricted Mode is Activated on Channel cannot change\n");
     }
     else
     {

@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 22:31:50 by moamzil           #+#    #+#             */
-/*   Updated: 2025/01/31 22:31:51 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 22:56:13 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool    CommandHandler::check_mode(const std::string& mode, Client& client, cons
 }
 
 
-void    CommandHandler::execute_MODE(Client& client, Channel& Mainchannel) {
+void    CommandHandler::execute_MODE(Client& client, Channel& Mainchannel, Server& server) {
     if (client.getAuth() == 0)
         sendMessageToClient(client, "You must authenticate with PASS first.\n");
     else if (client.getUser() == "NULL")
@@ -79,6 +79,11 @@ void    CommandHandler::execute_MODE(Client& client, Channel& Mainchannel) {
             {
                 if (check_mode(command_args[2], client, command_args[3])) {
                     // comment was here
+                    if (!channel->isUserInChannel(&server.getUserToKick(command_args[3]))) {
+                        sendMessageToClient(client, "Error: The specified User does not exist.\n");
+                        command_args.clear();
+                        return ;
+                    }
                     channel->setMode(&client, command_args[2], command_args[3]);
                     std::cout << "Log: Execute: "<< client.getNickname() << " MODE " << command_args[1]  + " "<< command_args[2] + " ";
                     std::cout << command_args[3] << std::endl;

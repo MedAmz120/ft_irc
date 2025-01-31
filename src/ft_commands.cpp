@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 22:31:11 by moamzil           #+#    #+#             */
-/*   Updated: 2025/01/31 22:31:12 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 23:16:40 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
             else if (command_args[0] == "KICK") // DONE
                 execute_KICK(client, server, channel);
             else if (command_args[0] == "MODE") // DONE
-                execute_MODE(client, channel);
+                execute_MODE(client, channel, server);
             else if (command_args[0] == "INVITE") // DONE 
                 execute_INVITE(client, server, channel);
             else if (command_args[0] == "TOPIC") // DONE 
@@ -128,7 +128,7 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
             else if (command_args[0] == "TIME") // DONE
                 execute_TIME(client);
             else if (command_args[0] == "NOTICE") // DONE
-                execute_NOTICE(client, server);
+                execute_NOTICE(client, server, channel);
             else if (command_args[0] == "CAP LS" || command_args[0] == "CAP") {
                 i++;
                 continue ;
@@ -166,7 +166,7 @@ void    CommandHandler::handleCommand(Client& client, Server& server, Channel& c
     else if (command_args[0] == "KICK") // DONE
         execute_KICK(client, server, channel);
     else if (command_args[0] == "MODE") // DONE
-        execute_MODE(client, channel);
+        execute_MODE(client, channel, server);
     else if (command_args[0] == "INVITE") // DONE 
         execute_INVITE(client, server, channel);
     else if (command_args[0] == "TOPIC") // DONE 
@@ -174,5 +174,5 @@ void    CommandHandler::handleCommand(Client& client, Server& server, Channel& c
     else if (command_args[0] == "TIME") // DONE
         execute_TIME(client);
     else if (command_args[0] == "NOTICE") // DONE
-        execute_NOTICE(client, server);
+        execute_NOTICE(client, server, channel);
 }

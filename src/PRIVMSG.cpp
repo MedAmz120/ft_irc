@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 22:32:27 by moamzil           #+#    #+#             */
-/*   Updated: 2025/01/31 22:37:29 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 23:22:28 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ void    CommandHandler::execute_PRIVMSG(Client& client, const Server& server, Ch
         else {
             if (server.isClientInServer(command_args[1])) {
                 const Client& recipient = server.getRecipient(command_args[1]);
+                if (recipient.getNickname() == client.getNickname()) {
+                    sendMessageToClient(client, "Error: You cannot send Message to yourself.\n");
+                    command_args.clear();
+                    return;
+                }
                 sendMessageToClient(recipient, full_message);
                 std::cout << "Log: "<< client.getUser() << " send " << full_message << " To " << recipient.getNickname() << std::endl;           
                 command_args.clear();

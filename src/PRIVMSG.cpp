@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PRIVMSG.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 22:32:27 by moamzil           #+#    #+#             */
+/*   Updated: 2025/01/31 22:37:29 by moamzil          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/ft_commands.hpp"
 
 void    CommandHandler::execute_PRIVMSG(Client& client, const Server& server, Channel& Mainchannel) {
@@ -34,8 +46,7 @@ void    CommandHandler::execute_PRIVMSG(Client& client, const Server& server, Ch
             }
             else {
                 if (channel->isUserInChannel(&client)) {
-                channel->broadcastMessage(full_message);
-                std::cout << "-----> " << full_message << std::endl;
+                channel->broadcastMessage(client.getNickname() + ": "+ full_message);
                 std::cout << "Log: "<< client.getNickname() << " send \"" << full_message << "\" To " << command_args[1] << std::endl;           
                 command_args.clear();
                 return ;

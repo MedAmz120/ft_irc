@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   KICK.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 22:31:43 by moamzil           #+#    #+#             */
+/*   Updated: 2025/01/31 22:31:44 by moamzil          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/ft_commands.hpp"
 
 void    CommandHandler::execute_KICK(Client& client, Server& server, Channel& Mainchannel) {

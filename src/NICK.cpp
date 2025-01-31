@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   NICK.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 22:32:03 by moamzil           #+#    #+#             */
+/*   Updated: 2025/01/31 22:32:06 by moamzil          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/ft_commands.hpp"
 
 bool    CommandHandler::check_nickname(const std::string& nick_name, const std::map<int, Client>&  clients_list) {

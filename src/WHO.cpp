@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WHO.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 22:33:22 by moamzil           #+#    #+#             */
+/*   Updated: 2025/01/31 22:33:25 by moamzil          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/ft_commands.hpp"
 
 void    CommandHandler::display_client_WHO(Client& client, const std::string& nick_name, const std::map<int, Client>& clients_list) {

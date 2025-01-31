@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Channel.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/19 20:30:55 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/31 21:16:38 by moamzil          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../include/Channel.hpp"
 #include <algorithm>
 #include <sys/socket.h>
@@ -164,7 +152,7 @@ void Channel::kickUser(Client *operatorUser, Client *targetUser, const std::stri
         return;
     }
 
-    std::string kickMessage = ":" + operatorUser->getNickname() + " KICKED " + targetUser->getNickname() + " For : " + reason + "\r\n";
+    std::string kickMessage = targetUser->getNickname() + " has been Kicked from " + this->getName() + " For : " + reason + "\r\n";
     broadcastMessage(kickMessage);
     removeUser(targetUser);
 }

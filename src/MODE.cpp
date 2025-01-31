@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   MODE.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 22:31:50 by moamzil           #+#    #+#             */
+/*   Updated: 2025/01/31 22:31:51 by moamzil          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/ft_commands.hpp"
 
 bool    check_L_mode_arg(const std::string& str) // check the arguments if it s a valid number not a combination of chars
@@ -22,6 +34,8 @@ bool isTIMode(const std::string& mode) {
     return mode == "+t" || mode == "-t" ||
            mode == "+i" || mode == "-i";
 }
+
+
 
 bool    CommandHandler::check_mode(const std::string& mode, Client& client, const std::string& command_args)
 {

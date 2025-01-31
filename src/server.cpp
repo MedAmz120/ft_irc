@@ -86,15 +86,16 @@ void Server::handleIncomingData(int fd, Channel& channel)
 		std::cout << COLOR_YELLOW << "Client <" << fd << "> sent: " << COLOR_WHITE << buff;
 		// Mohamed here you can add your code to process the received data: parse, check, authenticate, handle the command, etc...
 		CommandHandler  command(this->getPassword());
-		if (command.check_command(buff) == 1) {
-            command.handleCommand(clients_list[fd], *this, channels);
-        } 
-		else if (command.check_command(buff) == -1 ) {
-			command.handleLSCAP(buff, clients_list[fd], *this);
-		}
-		else {
-            command.sendMessageToClient(clients_list[fd], "Command not exist\n");
-        }
+		// if (command.check_command(buff) == 1) {
+        //     // command.handleCommand(clients_list[fd], *this, channels);
+		command.handleLSCAP(buff, clients_list[fd], *this, channels);
+        // } 
+		// else if (command.check_command(buff) == -1 ) {
+		// 	command.handleLSCAP(buff, clients_list[fd], *this, channels);
+		// }
+		// else {
+        //     command.sendMessageToClient(clients_list[fd], "Command not exist\n");
+        // }
 	}
 }
 void Server::removeClient(int fd)

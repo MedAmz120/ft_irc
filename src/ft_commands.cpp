@@ -59,7 +59,7 @@ int    CommandHandler::check_command(const std::string& client_input) {
 }
 
 
-void    CommandHandler::handleLSCAP(const std::string& client_input, Client& client, Server& server) {
+void    CommandHandler::handleLSCAP(const std::string& client_input, Client& client, Server& server, Channel& channel) {
     // Split the input by new lines
     std::istringstream iss(client_input);
     std::string line;
@@ -71,11 +71,11 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
             lines.push_back(line);
         }
     }
-    // size_t i = 0;
-    // if (client_input.find("CAP LS") != std::string::npos)
-    //     size_t i = 1;
+    size_t i = 0;
+    if (client_input.find("CAP LS") != std::string::npos)
+        size_t i = 1;
     // Assuming the first line is always "CAP LS" and should be ignored
-    for (size_t i = 1; i < lines.size(); i++) {
+    while(i < lines.size()) {
         // Clear previous commands
         command_args.clear();
 
@@ -85,20 +85,46 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
         while (cmdStream >> word) {
             command_args.push_back(word);
         }
-
         // Process commands based on the first word
-        if (!command_args.empty()) {
+        
             if (command_args[0] == "PASS")
                 execute_PASS(client);
-            else if (command_args[0] == "USER")
+            else if (command_args[0] == "USER") // Done
                 execute_USER(client);
-            else if (command_args[0] == "NICK")
+            else if (command_args[0] == "NICK") // Done
                 execute_NICK(client, server);
+            else if (command_args[0] == "QUIT")// DONE
+                execute_QUIT(client, server);
+            else if (command_args[0] == "ADMIN")// DONE
+                execute_ADMIN(client);
+            else if (command_args[0] == "WHO") // Done
+                execute_WHO(client, server);
+            else if (command_args[0] == "JOIN") // Done
+                execute_JOIN(client, channel);
+            else if (command_args[0] == "PART") // DONE
+                execute_PART(client, channel);
+            else if (command_args[0] == "PRIVMSG") // DONE 
+                execute_PRIVMSG(client, server, channel);
+            else if (command_args[0] == "KICK") // DONE
+                execute_KICK(client, server, channel);
+            else if (command_args[0] == "MODE") // DONE
+                execute_MODE(client, channel);
+            else if (command_args[0] == "INVITE") // DONE 
+                execute_INVITE(client, server, channel);
+            else if (command_args[0] == "TOPIC") // DONE 
+                execute_TOPIC(client, channel);
+            else if (command_args[0] == "TIME") // DONE
+                execute_TIME(client);
+            else if (command_args[0] == "NOTICE") // DONE
+                execute_NOTICE(client, server);
+            else if (command_args[0] == "CAP LS" || command_args[0] == "CAP")
+                i++;
             else {
                 sendMessageToClient(client, "Command Not found\n");
                 return;
             }
-        }
+
+        i++;
     }
     // Clear command arguments after processing
     command_args.clear();

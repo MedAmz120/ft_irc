@@ -39,7 +39,7 @@ private:
 	std::string password;
 	int ServerSocket; //-> server socket file descriptor
 	static bool signalFlag;
-	std::vector<Client> clientList;
+	// std::vector<Client> clientList;
 	std::vector<struct pollfd> pollDescriptors;
 	// ------- Mohamed -------
 	char                buffer[BUFFER_SIZE];

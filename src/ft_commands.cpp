@@ -117,8 +117,10 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
                 execute_TIME(client);
             else if (command_args[0] == "NOTICE") // DONE
                 execute_NOTICE(client, server);
-            else if (command_args[0] == "CAP LS" || command_args[0] == "CAP")
+            else if (command_args[0] == "CAP LS" || command_args[0] == "CAP") {
                 i++;
+                continue ;
+            }
             else {
                 sendMessageToClient(client, "Command Not found\n");
                 return;

@@ -35,8 +35,8 @@ int    CommandHandler::check_command(const std::string& client_input) {
     // Check for the presence of the substring "CAP LS"
     if (client_input.find("CAP LS") != std::string::npos) {
         return -1;
-    }
-    
+    }    
+
     if (client_input.empty())
         return false;
     std::istringstream  iss(client_input);
@@ -71,7 +71,9 @@ void    CommandHandler::handleLSCAP(const std::string& client_input, Client& cli
             lines.push_back(line);
         }
     }
-
+    // size_t i = 0;
+    // if (client_input.find("CAP LS") != std::string::npos)
+    //     size_t i = 1;
     // Assuming the first line is always "CAP LS" and should be ignored
     for (size_t i = 1; i < lines.size(); i++) {
         // Clear previous commands

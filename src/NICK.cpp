@@ -21,6 +21,9 @@ void    CommandHandler::execute_NICK(Client& client, const Server& server)
         if (!check_nickname(command_args[1], server.Getclient_list())) {
             sendMessageToClient(client, "Nickname already taken, please choose a different one\n");
         }
+        else if (!check_username(command_args[1])) {
+            sendMessageToClient(client, "Invalid Nickname Format, please choose a different one\n");
+        }
         else {
             client.SetNickName(command_args[1]);
             sendMessageToClient(client, "Nickname set successfully !\n");

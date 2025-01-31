@@ -40,8 +40,9 @@ void CommandHandler::execute_INVITE(Client& client, Server& server, Channel& Mai
     }
     channel->inviteUser(&client, &recipient);
     std::string recipient_name = recipient.getNickname();
+    std::string sender_name = client.getNickname();
     recipient.addInvitations(channel->getName());
-    sendMessageToClient(recipient,  recipient_name + " invited you to join channel " + channel->getName() + '\n');
-    sendMessageToClient(client,  recipient_name + " has been invited you to join channel " + channel->getName() + '\n');
+    sendMessageToClient(recipient, sender_name + " invited you to join channel " + channel->getName() + '\n');
+    sendMessageToClient(client,  recipient_name + " has been invited to join channel " + channel->getName() + '\n');
     command_args.clear();
 }

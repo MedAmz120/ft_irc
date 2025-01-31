@@ -30,7 +30,13 @@ void    CommandHandler::sendMessageToClient(const Client& client, const std::str
         send (client.getClientFd(), message.c_str(), message.size(), 0);
 }
 
-bool    CommandHandler::check_command(const std::string& client_input) {
+int    CommandHandler::check_command(const std::string& client_input) {
+
+    // Check for the presence of the substring "CAP LS"
+    if (client_input.find("CAP LS") != std::string::npos) {
+        return -1;
+    }
+    
     if (client_input.empty())
         return false;
     std::istringstream  iss(client_input);
@@ -52,6 +58,50 @@ bool    CommandHandler::check_command(const std::string& client_input) {
     return true;
 }
 
+
+void    CommandHandler::handleLSCAP(const std::string& client_input, Client& client, Server& server) {
+    // Split the input by new lines
+    std::istringstream iss(client_input);
+    std::string line;
+    std::vector<std::string> lines;
+
+    // Read all lines into a vector
+    while (std::getline(iss, line)) {
+        if (!line.empty()) {
+            lines.push_back(line);
+        }
+    }
+
+    // Assuming the first line is always "CAP LS" and should be ignored
+    for (size_t i = 1; i < lines.size(); i++) {
+        // Clear previous commands
+        command_args.clear();
+
+        // Split the line into words and push into command_args
+        std::istringstream cmdStream(lines[i]);
+        std::string word;
+        while (cmdStream >> word) {
+            command_args.push_back(word);
+        }
+
+        // Process commands based on the first word
+        if (!command_args.empty()) {
+            if (command_args[0] == "PASS")
+                execute_PASS(client);
+            else if (command_args[0] == "USER")
+                execute_USER(client);
+            else if (command_args[0] == "NICK")
+                execute_NICK(client, server);
+            else {
+                sendMessageToClient(client, "Command Not found\n");
+                return;
+            }
+        }
+    }
+    // Clear command arguments after processing
+    command_args.clear();
+};
+
 void    CommandHandler::handleCommand(Client& client, Server& server, Channel& channel) {
     if (command_args[0] == "PASS")
         execute_PASS(client);
@@ -69,15 +119,15 @@ void    CommandHandler::handleCommand(Client& client, Server& server, Channel& c
         execute_JOIN(client, channel);
     else if (command_args[0] == "PART") // DONE
         execute_PART(client, channel);
-    else if (command_args[0] == "PRIVMSG") // DONE  to fix BROADCAST msg l channel mkhdamch PRIVMSG #pool message
+    else if (command_args[0] == "PRIVMSG") // DONE 
         execute_PRIVMSG(client, server, channel);
     else if (command_args[0] == "KICK") // DONE
         execute_KICK(client, server, channel);
     else if (command_args[0] == "MODE") // DONE
         execute_MODE(client, channel);
-    else if (command_args[0] == "INVITE") // DONE but add a log message on channel::inviteUser() method  to fix mktwslch invite l recipient INVITE channel nickname
+    else if (command_args[0] == "INVITE") // DONE 
         execute_INVITE(client, server, channel);
-    else if (command_args[0] == "TOPIC") // DONE but Channel::setTopic() doesn't check properly if the channel is topic restricted and must add log message also
+    else if (command_args[0] == "TOPIC") // DONE 
         execute_TOPIC(client, channel);
     else if (command_args[0] == "TIME") // DONE
         execute_TIME(client);

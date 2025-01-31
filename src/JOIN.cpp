@@ -101,7 +101,7 @@ void CommandHandler::execute_JOIN(Client &client, Channel &Mainchannel)
                     {
                         sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
                         channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
-                        std::cout << "Log: " << client.getUser() << " has joined the channel " << command_args[1] << std::endl;
+                        std::cout << "Log: " << client.getNickname() << " has joined the channel " << command_args[1] << std::endl;
                     }
                     else
                     {
@@ -117,7 +117,7 @@ void CommandHandler::execute_JOIN(Client &client, Channel &Mainchannel)
                 {
                     sendMessageToClient(client, "You have joined the channel: " + channelName + "\n");
                     channel->broadcastMessage(client.getNickname() + " has joined the channel.\n");
-                    std::cout << "Log: " << client.getUser() << " has joined the channel " << command_args[1] << std::endl;
+                    std::cout << "Log: " << client.getNickname() << " has joined the channel " << command_args[1] << std::endl;
                 }
                 else
                 {
@@ -132,7 +132,7 @@ void CommandHandler::execute_JOIN(Client &client, Channel &Mainchannel)
         channel->addUser(&client);
         sendMessageToClient(client, "You have successfully created and joined the channel: " + channelName + "\n");
         channel->broadcastMessage(client.getNickname() + " has created and joined the channel.\n");
-        std::cout << "Log: " << client.getUser() << " has created and joined the channel " << command_args[1] << std::endl;
+        std::cout << "Log: " << client.getNickname() << " has created and joined the channel " << command_args[1] << std::endl;
     }
     command_args.clear();
 }

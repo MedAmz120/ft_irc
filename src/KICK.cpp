@@ -9,7 +9,17 @@ void    CommandHandler::execute_KICK(Client& client, Server& server, Channel& Ma
         sendMessageToClient(client, "Error: Bad usage KICK <#channel> <nickname> :<reason>\n");
     else 
     {
-        Channel *channel = Mainchannel.getChannel(command_args[1]);
+        int channel_argpos = 1;
+        int usertokick_argpos = 2;
+        int reason_argpos = 3;
+
+        if (command_args[1][0] != '#') {
+            channel_argpos = 2;
+            usertokick_argpos = 3;
+            reason_argpos = 4;
+        }
+
+        Channel *channel = Mainchannel.getChannel(command_args[channel_argpos]);
         if (channel == nullptr) 
         {
             sendMessageToClient(client, "Error: The specified channel does not exist.\n");
@@ -20,20 +30,26 @@ void    CommandHandler::execute_KICK(Client& client, Server& server, Channel& Ma
         {
             if (channel->isOperator(&client)) 
             {
-                Client& user_to_kick = server.getUserToKick(command_args[2]);
+                if (!command_args[usertokick_argpos].empty() && command_args[usertokick_argpos][0] == ':') {
+                    std::string newStr = command_args[usertokick_argpos].substr(1);  // Removes the first character
+                    command_args[usertokick_argpos] = newStr;
+                }
+                Client& user_to_kick = server.getUserToKick(command_args[usertokick_argpos]);
                 std::string   reason;
-                for (size_t i = 3; i < command_args.size(); i++) 
+                for (size_t i = reason_argpos; i < command_args.size(); i++) 
                 {
-                    if (i > 3)
+                    if (i > reason_argpos)
                         reason += " "; // Add a space before appending, except for the first element
                     reason += command_args[i];
                 }
+                if (reason.empty())
+                    reason = "no reason";
                 if (channel->isUserInChannel(&user_to_kick)) 
                 {
                     channel->kickUser(&client, &user_to_kick, reason);
                     sendMessageToClient(client, "User Has been Kicked from channel\n");
-                    std::cout << "Log: "<< client.getUser() << " KICKED " << user_to_kick.getNickname() << " from ";
-                    std::cout << command_args[1] << " in reason: " << reason << std::endl;
+                    std::cout << "Log: "<< client.getNickname() << " KICKED " << user_to_kick.getNickname() << " from ";
+                    std::cout << command_args[channel_argpos] << " in reason: " << reason << std::endl;
                 }
                 else
                 {

@@ -6,7 +6,7 @@
 /*   By: moamzil <moamzil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 20:30:55 by ychihab           #+#    #+#             */
-/*   Updated: 2025/01/30 20:49:26 by moamzil          ###   ########.fr       */
+/*   Updated: 2025/01/31 21:16:38 by moamzil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void Channel::kickUser(Client *operatorUser, Client *targetUser, const std::stri
         return;
     }
 
-    std::string kickMessage = ":" + operatorUser->nickname + " KICKED " + targetUser->nickname + "For : " + reason + "\r\n";
+    std::string kickMessage = ":" + operatorUser->getNickname() + " KICKED " + targetUser->getNickname() + " For : " + reason + "\r\n";
     broadcastMessage(kickMessage);
     removeUser(targetUser);
 }

@@ -12,7 +12,7 @@ void    CommandHandler::execute_PART(Client& client, Channel& Mainchannel) {
         command_args.clear();
         return ;
     }
-    else if (command_args.size() != 2) {
+    else if (command_args.size() > 3) {
         sendMessageToClient(client, "Error: Bad usage PART <channel>\n");
         command_args.clear();
         return ;
@@ -27,7 +27,11 @@ void    CommandHandler::execute_PART(Client& client, Channel& Mainchannel) {
         if (channel->isUserInChannel(&client)) {
             channel->removeUser(&client);
             sendMessageToClient(client, "You have been successfully removed from the channel.\n");
-            std::cout << "Log: "<< client.getUser() << " left the channel name " << command_args[1] << std::endl;
+            std::string reason = "no reason";
+            if (command_args.size() == 3)
+                reason = command_args[2];
+            std::cout << "Log: "<< client.getNickname() << " left the channel name " << command_args[1] + " For " + reason << std::endl;
+            channel->broadcastMessage(client.getNickname() + " left the channel name " + command_args[1] + '\n');
         }
         else {
             sendMessageToClient(client, "Error: You are not a member of the specified channel.\n");

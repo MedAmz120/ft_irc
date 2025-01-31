@@ -66,7 +66,7 @@ void    CommandHandler::execute_MODE(Client& client, Channel& Mainchannel) {
                 if (check_mode(command_args[2], client, command_args[3])) {
                     // comment was here
                     channel->setMode(&client, command_args[2], command_args[3]);
-                    std::cout << "Log: Execute: "<< client.getUser() << " MODE " << command_args[1]  + " "<< command_args[2] + " ";
+                    std::cout << "Log: Execute: "<< client.getNickname() << " MODE " << command_args[1]  + " "<< command_args[2] + " ";
                     std::cout << command_args[3] << std::endl;
                 }
             }
